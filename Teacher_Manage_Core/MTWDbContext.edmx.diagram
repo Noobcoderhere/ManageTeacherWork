@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="f34cef4966884c8eb565486f05f790dc" Name="Diagram1" ZoomLevel="106">
+        <EntityTypeShape EntityType="Teacher_Manage_Core.CalendarWorking" Width="1.5" PointX="12" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.Class" Width="1.5" PointX="5.25" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.Event" Width="1.5" PointX="7.25" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.File" Width="1.5" PointX="5.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.GroupUser" Width="1.5" PointX="2.75" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.Major" Width="1.5" PointX="0.75" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.MonthReport" Width="1.5" PointX="7.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.Student" Width="1.5" PointX="7.5" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.Teacher" Width="1.5" PointX="3" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.TypeCalendar" Width="1.5" PointX="9.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.User" Width="1.5" PointX="5" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.Work" Width="1.5" PointX="9.75" PointY="6.75" IsExpanded="true" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_CalendarWorking_TypeCalendar" ManuallyRouted="false" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_CalendarWorking_Work" ManuallyRouted="false" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_Class_Major" ManuallyRouted="false" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_Class_Teacher" ManuallyRouted="false" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_Student_Class" ManuallyRouted="false" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_Event_User" ManuallyRouted="false" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_User_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_Teacher_Major" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="Teacher_Manage_Core.TeachCalendar" Width="1.5" PointX="10.5" PointY="10.75" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_TeachCal_Class" />
+        <AssociationConnector Association="Teacher_Manage_Core.FK_TeachCal_Teacher" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

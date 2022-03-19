@@ -1,0 +1,298 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+    var session = (Managing_Teacher_Web.Common.UserLogin)Session[Managing_Teacher_Web.Common.CommonConstants.USER_SESSION];
+    var listSciense = ViewBag.listSciense;
+    var listCW = (IEnumerable<Teacher_Manage_Core.ViewModel.WorkingCalendar.WorkingCalendarVM>)ViewBag.listCW;
+    var permission = session.GroupID;
+}
+<style>
+    .button-delete {
+        color: white;
+    }
+</style>
+
+<div class="row">
+    <h2 style="text-align:center;">LỊCH CÔNG TÁC</h2>
+</div>
+<div id="myTabContent" class="tab-content">
+    <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Lịch công tác giáo viên</h2>
+
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div>
+                            @if (TempData["AlertMessage"] != null)
+                            {
+                                <div id="AlertBox" class="alert @TempData["AlertType"] hide" role="alert">
+                                    @TempData["AlertMessage"]
+                                </div>
+                            }
+                        </div>
+                        <table id="datatable-buttons" class="table table-striped jambo_table bulk_action">
+                            <thead>
+                                <tr style="width:100%">
+                                    <th style="width:50%">Công việc</th>
+                                    <th style="width:10%">Ngày bắt đầu</th>
+                                    <th style="width:10%">Ngày kết thúc</th>
+                                    <th style="width:15%">Chủ nhiệm</th>
+                                    <th style="width:10%">Tình trạng</th>
+                                    <th style="width:5%">Thao tác</th>
+                                </tr>
+                            </thead>
+
+
+                            <tbody>
+                                @foreach (var item in listCW)
+                                {
+                                    <tr>
+
+                                        <td><a href="/Calendar-Working-Detail/@item.ID">@(item.Name_CalendarWorking ?? "")</a></td>
+
+                                        @if (item.DateStart != null)
+                                        {
+                                            <td>
+                                                @(item.DateStart.ToString("dd/MM/yyyy"))
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td><p>Không có</p></td>
+                                        }
+
+                                        @if (item.DateEnd != null)
+                                        {
+                                            <td>@(item.DateEnd.ToString("dd/MM/yyyy"))</td>
+                                        }
+                                        else
+                                        {
+                                            <td><p>Không có</p></td>
+                                        }
+                                        <td>@item.Teacher_Name</td>
+                                        <td>
+                                            @if (item.WorkState.Equals("DangThucHien"))
+                                            {
+                                                <span style="color:orange">Đang thực hiện</span>
+                                            }
+                                            else if (item.WorkState.Equals("DaHoanThanh"))
+                                            {
+                                                <span style="color:limegreen">Đã hoàn thành</span>
+                                            }
+                                            else if (item.WorkState == "TamHoan")
+                                            {
+                                                <span style="color:black">Tạm hoãn</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (session.GroupID.Equals("ADMIN") && item.WorkState.Equals("DangThucHien"))
+                                            {
+                                                @*<button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                                                    <i class="fa fa-check"></i>
+                                                    @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                                                      new AjaxOptions
+                                                      {
+                                                          Confirm = "Công việc đã hoàn thành?",
+                                                          OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                          HttpMethod = "Post"
+                                                      }, new { @class = "button-delete" })
+                                                </button>*@
+                                                <button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                                                    <i class="fa fa-check"></i>
+                                                    @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                                                     new AjaxOptions
+                                                     {
+                                                         Confirm = "Công việc đã hoàn thành?",
+                                                         OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                         HttpMethod = "Post"
+                                                     }, new { @class = "button-delete" })
+                                                </button>
+                                                <button href="#" class="btn btn-warning btn-xs" style="color:white;">
+                                                    <i class="fa fa-warning"></i>
+                                                    @Ajax.ActionLink("Hoãn", "Cancel", new { @id = item.ID },
+                                                 new AjaxOptions
+                                                 {
+                                                     Confirm = "Bạn có muốn hoãn công việc này?",
+                                                     OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                     HttpMethod = "Post"
+                                                 }, new { @class = "button-delete" })
+                                                </button>
+                                            }
+                                            else if (session.GroupID.Equals("ADMIN") && item.WorkState.Equals("DaHoanThanh"))
+                                            {
+
+                                                @*<button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                <i class="fa fa-check"></i>
+                @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                  new AjaxOptions
+                  {
+                      Confirm = "Công việc đã hoàn thành?",
+                      OnComplete = "$('row_" + @item.ID + "').remove()",
+                      HttpMethod = "Post"
+                  }, new { @class = "button-delete" })
+            </button>
+            <button href="#" class="btn btn-warning btn-xs" style="color:white;">
+                <i class="fa fa-warning"></i>
+                @Ajax.ActionLink("Hoãn", "Cancel", new { @id = item.ID },
+             new AjaxOptions
+             {
+                 Confirm = "Bạn có muốn hoãn buổi học này?",
+                 OnComplete = "$('row_" + @item.ID + "').remove()",
+                 HttpMethod = "Post"
+             }, new { @class = "button-delete" })
+            </button>*@
+                                            }
+                                            else if (session.GroupID.Equals("ADMIN") && item.WorkState.Equals("TamHoan"))
+                                            {
+                                                @*<button href="#" class="btn btn-warning btn-xs" style="color:orange;">
+                <i class="fa fa-check"></i>
+                @Ajax.ActionLink("Tiếp tục", "Continue", new { @id = item.ID },
+                  new AjaxOptions
+                  {
+                      Confirm = "Công việc đã hoàn thành?",
+                      OnComplete = "$('row_" + @item.ID + "').remove()",
+                      HttpMethod = "Post"
+                  }, new { @class = "button-delete" })
+            </button>*@
+                                                <button href="#" class="btn btn-warning btn-xs" style="color:orange;">
+                                                    <i class="fa fa-trash-o"></i>
+                                                    @Ajax.ActionLink("Tiếp tục", "Continue", new { @id = item.ID },
+                                                     new AjaxOptions
+                                                     {
+                                                         Confirm = "Bạn có muốn tiếp tục công việc này?",
+                                                         OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                         HttpMethod = "Post"
+                                                     }, new { @class = "button-delete" })
+                                                </button>
+                                                @*<button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                <i class="fa fa-check"></i>
+                @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                  new AjaxOptions
+                  {
+                      Confirm = "Công việc đã hoàn thành?",
+                      OnComplete = "$('row_" + @item.ID + "').remove()",
+                      HttpMethod = "Post"
+                  }, new { @class = "button-delete" })
+            </button>*@
+                                                <button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                                                    <i class="fa fa-check"></i>
+                                                    @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                                                     new AjaxOptions
+                                                     {
+                                                         Confirm = "Công việc đã hoàn thành?",
+                                                         OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                         HttpMethod = "Post"
+                                                     }, new { @class = "button-delete" })
+                                                </button>
+                                            }
+                                            else if (session.TeacherID == item.TeacherID && item.WorkState.Equals("DangThucHien"))
+                                            {
+                                                @*<button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                <i class="fa fa-check"></i>
+                @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                  new AjaxOptions
+                  {
+                      Confirm = "Công việc đã hoàn thành?",
+                      OnComplete = "$('row_" + @item.ID + "').remove()",
+                      HttpMethod = "Post"
+                  }, new { @class = "button-delete" })
+            </button>*@
+                                                <button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                                                    <i class="fa fa-check"></i>
+                                                    @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                                                     new AjaxOptions
+                                                     {
+                                                         Confirm = "Công việc đã hoàn thành?",
+                                                         OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                         HttpMethod = "Post"
+                                                     }, new { @class = "button-delete" })
+                                                </button>
+                                                @*<button href="#" class="btn btn-warning btn-xs" style="color:white;">
+                <i class="fa fa-warning"></i>
+                @Ajax.ActionLink("Hoãn", "Cancel", new { @id = item.ID },
+             new AjaxOptions
+             {
+                 Confirm = "Bạn có muốn hoãn công việc này?",
+                 OnComplete = "$('row_" + @item.ID + "').remove()",
+                 HttpMethod = "Post"
+             }, new { @class = "button-delete" })
+            </button>*@
+                                                <button href="#" class="btn btn-warning btn-xs" style="color:orange;">
+                                                    <i class="fa fa-warning"></i>
+                                                    @Ajax.ActionLink("Hoãn", "Cancel", new { @id = item.ID },
+                                                     new AjaxOptions
+                                                     {
+                                                         Confirm = "Bạn có muốn hoãn lịch này?",
+                                                         OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                         HttpMethod = "Post"
+                                                     }, new { @class = "button-delete" })
+                                                </button>
+                                            }
+                                            else if (session.TeacherID == item.TeacherID && item.WorkState.Equals("DaHoanThanh"))
+                                            {
+
+                                            }
+                                            else if (session.TeacherID == item.TeacherID && item.WorkState.Equals("TamHoan"))
+                                            {
+                                                @*<button href="#" class="btn btn-warning btn-xs" style="color:white;">
+                <i class="fa fa-info"></i>
+                @Ajax.ActionLink("Tiếp tục", "Continue", new { @id = item.ID },
+                  new AjaxOptions
+                  {
+                      Confirm = "Công việc đã hoàn thành?",
+                      OnComplete = "$('row_" + @item.ID + "').remove()",
+                      HttpMethod = "Post"
+                  }, new { @class = "button-delete" })
+            </button>*@
+                                                <button href="#" class="btn btn-warning btn-xs" style="color:orange;">
+                                                    <i class="fa fa-trash-o"></i>
+                                                    @Ajax.ActionLink("Tiếp tục", "Continue", new { @id = item.ID },
+                                                     new AjaxOptions
+                                                     {
+                                                         Confirm = "Bạn có muốn tiếp tục công việc này?",
+                                                         OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                         HttpMethod = "Post"
+                                                     }, new { @class = "button-delete" })
+                                                </button>
+                                                @*<button href="#" class="btn btn-success btn-xs" style="color:white;">
+                <i class="fa fa-check"></i>
+                @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                  new AjaxOptions
+                  {
+                      Confirm = "Công việc đã hoàn thành?",
+                      OnComplete = "$('row_" + @item.ID + "').remove()",
+                      HttpMethod = "Post"
+                  }, new { @class = "button-delete" })
+            </button>*@
+                                                <button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                                                    <i class="fa fa-check"></i>
+                                                    @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                                                     new AjaxOptions
+                                                     {
+                                                         Confirm = "Công việc đã hoàn thành?",
+                                                         OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                         HttpMethod = "Post"
+                                                     }, new { @class = "button-delete" })
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+﻿@{
+    var listTeacher = ViewBag.Teachers;
+    var listClasses = ViewBag.Classes;
+}
+<script>
+    function validate() {
+        if ($('#ClassID').val() == "") {
+            alert('Bạn chưa chọn lớp ! ');
+            return false;
+        }
+        if ($('#Subject_Name').val() == "") {
+            alert('Bạn chưa nhập tên môn ! ');
+            return false;
+        }
+        if ($('#TeacherID').val() == "") {
+            alert('Bạn chưa chọn giáo viên ! ');
+            return false;
+        }
+        if ($('#Room').val() == "") {
+            alert('Bạn nhập phòng học !');
+            return false;
+        }
+        //if ($('#StartTime').val() == "") {
+        //    alert('Bạn chưa chọn giờ bắt đầu !');
+        //    return false;
+        //}
+        //if ($('#EndTime').val() == "") {
+        //    alert('Bạn chưa chọn giờ kết thúc !');
+        //    return false;
+        //}
+        return true;
+    }
+</script>
+<form action="/TeachCalendar/Add" method="post" class="needs-validation">
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <label id="lblresult"></label>
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Quản lý lịch giảng dạy</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type="hidden" name="ID" id="ID" value="0">
+                    <div class="form-group">
+                        <label>Lớp<span style="color:red">(*)</span></label>
+                        <select class="form-control" name="ClassID" id="ClassID">
+                            @foreach (var item in listClasses)
+                            {
+                                <option value="@item.ID">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tên môn học<span style="color:red">(*)</span></label>
+                        <input class="form-control" type="text" id="Subject_Name" name="Subject_Name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Giáo viên dạy<span style="color:red">(*)</span></label>
+                        <select class="form-control" name="TeacherID" id="TeacherID">
+                            @foreach (var item in listTeacher)
+                            {
+                                <option value="@item.ID">@item.Name_Teacher</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phòng học</label>
+                        <input type="text" class="form-control" name="Room" id="Room" />
+                    </div>
+                    <div class="form-group">
+                        <label>Giờ bắt đầu<span style="color:red">(*)</span></label>
+                        <input class="form-control" type="datetime-local" id="StartTime" name="StartTime"/>
+                        <input class="form-control" id="ST" name="ST" type="text" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label>Giờ kết thúc<span style="color:red">(*)</span></label>
+                        <input class="form-control" type="datetime-local" id="EndTime" name="EndTime"/>
+                        <input class="form-control" id="ET" name="ET" type="text" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label>Note</label>
+                        <textarea name="Note" id="Note" value=""></textarea>
+                    </div>
+                    <div class="form-group" hidden="hidden">
+                        <input id="Status" name="Status" value="ChuaBatDau" />
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fa fa-lightbulb-o"></i>&nbsp; Đóng</button>
+                    <button type="reset" class="btn btn-warning btn-sm"><i class="fa fa-map-marker"></i>&nbsp; Làm mới</button>
+
+                    <input type="submit" name="submit" class="btn btn-success btn-sm" id="bt_sua" value="Cập Nhật" onclick="return validate();" />
+                    <input type="submit" name="submit" class="btn btn-success btn-sm" id="bt_them" value="Thêm" onclick="return validate();" />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/assets/ckeditor/ckeditor.js"></script>
+<script src="~/assets/ckfinder/ckfinder.js"></script>
+<script>
+    CKEDITOR.replace("Note");
+    CKFinder.setupCKEditor(null, '/ckfinder');
+</script>
+

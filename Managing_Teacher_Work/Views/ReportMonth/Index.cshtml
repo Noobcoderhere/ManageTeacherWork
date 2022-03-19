@@ -1,0 +1,189 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+    var listForm = ViewBag.listForm;
+    var session = (Managing_Teacher_Web.Common.UserLogin)Session[Managing_Teacher_Web.Common.CommonConstants.USER_SESSION];
+    var listReport = ViewBag.listReport;
+
+}
+<style>
+    .button-delete {
+        color: white;
+    }
+</style>
+
+<div class="row">
+    <h2 style="text-align:center;">TẠO & GỬI BÁO CÁO MỚI</h2>
+</div>
+
+<div class="col-md-6 col-sm-6 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Mẫu báo cáo tháng <small>Dành cho giáo viên chủ nhiệm</small></h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div>
+                @if (TempData["AlertMessage"] != null)
+                {
+                    <div id="AlertBox" class="alert @TempData["AlertType"] hide" role="alert">
+                        @TempData["AlertMessage"]
+                    </div>
+                }
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Mã mẫu</th>
+                        <th>Tên mẫu</th>
+                        <th>Tải Xuống</th>
+                        @if (session.GroupID == "ADMIN")
+                        {
+                            <th>Thao tác</th>
+                        }
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (listForm != null)
+                    {
+                        foreach (var item in listForm)
+                        {
+                            <tr>
+                                <th scope="row">MBC-@item.ID</th>
+                                <td>@(item.Name ?? "")</td>
+                                <td><a href="@(item.FileForm??"")"><i class="fa fa-file-word-o"></i><i>Tải xuống</i></a></td>
+                                @if (session.GroupID == "ADMIN")
+                                {
+                                    <td>
+
+                                        <button href="#" class="btn btn-danger btn-xs" style="color:white;">
+                                            <i class="fa fa-trash-o"></i>
+                                            @Ajax.ActionLink("Xoá", "Delete", new { @id = item.ID },
+                                            new AjaxOptions
+                                            {
+                                                Confirm = "Bạn có muốn xoá mẫu này?",
+                                                OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                HttpMethod = "Delete"
+                                            }, new { @class = "button-delete" })
+                                        </button>
+                                    </td>
+                                }
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="col-md-6 col-sm-6 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Thao tác<small>chức năng báo cáo</small></h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+
+
+
+
+
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalSendReport" onclick="Gui()"><i class="fa fa-plus-square"></i>&nbsp;Gửi báo cáo tháng</button>
+            @if (session.GroupID == "ADMIN")
+            {
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="Them()"><i class="fa fa-plus-square"></i>&nbsp;Thêm mẫu báo cáo</button>
+
+            }
+            <a class="btn btn-search" style="background-color:orangered; color: white" href="/Home/">
+                <span></span><i class="fa fa-undo"></i>&nbsp;Quay lại
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="col-md-6 col-sm-6 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Hoạt động báo cáo tháng gần nhất <small>của giáo viên trong hệ thống </small></h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Người gửi</th>
+                        <th>Báo cáo ngày</th>
+                        <th>Thời gian gửi trong hệ thống</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (listReport != null)
+                    {
+                        foreach (var i in listReport)
+                        {
+                            <tr>
+                                <th scope="row">BC-@i.ID</th>
+                                <td>@i.Name</td>
+                                <td>@i.Date.ToString("dd/MM/yyyy")</td>
+                                <td>@i.CreatedDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                            </tr>
+                        }
+                    }
+
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+@Html.Partial("_AddFormModal")
+@Html.Partial("_SendReport")
+<script>
+    function Them() {
+        SetNull();
+        $("#bt_sua").hide();
+        $("#bt_them").show();
+    };
+    function SetNull() {
+        $("#Name").val('');
+        $("#FileForm").val('');
+    };
+    function Gui() {
+        SetNullFormSend();
+        $("#bt_suarp").hide();
+        $("#bt_guirp").show();
+    };
+    function SetNullFormSend() {
+        $("#Name").val('');
+        $("#Date").val('');
+        $("#Files").val('');
+    };
+</script>
+

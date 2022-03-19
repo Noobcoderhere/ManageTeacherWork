@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "ListClass";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+    var listClass = ViewBag.ListClass;
+    var major = ViewBag.Major;
+    var session = (Managing_Teacher_Web.Common.UserLogin)Session[Managing_Teacher_Web.Common.CommonConstants.USER_SESSION];
+
+}
+<script>
+    function cancel() {
+        if ((document.referrer.toString().indexOf("/MajorList/") != -1)) {
+            window.location = "/MajorList/";
+        }
+    }
+</script>
+
+<div id="myTabContent" class="tab-content">
+    <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Danh sách lớp thuộc khoa @major.Name</h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                        <table id="datatable-buttons" class="table table-striped jambo_table bulk_action">
+                            <thead>
+                                <tr>
+                                    <th>Tên lớp</th>
+                                    <th>Địa điểm</th>
+                                    <th>Giáo viên chủ nhiệm</th>
+                                    <th>Khoa</th>
+                                    <th>Hiện đang có tiết</th>
+                                </tr>
+                            </thead>
+
+
+                            <tbody>
+                                @foreach (var item in listClass)
+                                {
+                                    <tr>
+
+                                        <td>@item.Name</td>
+                                        <td>@item.Address</td>
+                                        <td>@item.TeacherName</td>
+                                        <td>@item.MajorName</td>
+                                        <td><span style="color:red">@item.HavingClass</span></td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="input" style="text-align: center;">
+
+                        <button class="btn btn-search" style="background-color:orangered; color: white" onclick="cancel();">
+                            <span></span><i class="fa fa-undo"></i>&nbsp;Quay lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

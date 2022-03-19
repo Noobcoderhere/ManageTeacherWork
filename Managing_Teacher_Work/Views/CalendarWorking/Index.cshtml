@@ -1,0 +1,279 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+    var listCW = (List<Teacher_Manage_Core.ViewModel.WorkingCalendar.WorkingCalendarVM>)ViewBag.listCW;
+
+
+}
+<style>
+    .button-delete {
+        color: white;
+    }
+</style>
+
+@{
+    var session = (Managing_Teacher_Web.Common.UserLogin)Session[Managing_Teacher_Web.Common.CommonConstants.USER_SESSION];
+
+}
+<script src="~/Scripts/jquery-3.0.0.min.js"></script>
+<script>
+    jQuery(document).ready(function () {
+        if ($('#hdnSession').val() == 'MEMBER') {
+            alert('Bạn không có quyền truy cập vào mục này!');
+            window.location = "/Home/";
+        }
+
+    });
+</script>
+<div class="row">
+    <h2 style="text-align:center;">QUẢN LÝ LỊCH CÔNG TÁC</h2>
+</div>
+<div style="display:none;">
+    <input type="hidden" id="hdnSession" value="@session.GroupID" />
+</div>
+<div class="row">
+    <div>
+        <label id="lblresult"></label>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Danh sách lịch công tác<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div style="text-align:right">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="Them()"><i class="fa fa-plus-square"></i>&nbsp;Thêm mới</button>
+                </div>
+                <div>
+                    @if (TempData["AlertMessage"] != null)
+                    {
+                        <div id="AlertBox" class="alert @TempData["AlertType"] hide" role="alert">
+                            @TempData["AlertMessage"]
+                        </div>
+                    }
+                </div>
+                <table id="datatable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="display:none;">Mã</th>
+                            <th>Tên lịch công tác</th>
+                            <th>Giáo viên phụ trách</th>
+                            <th>Ngày bắt đầu</th>
+                            <th>Ngày kết thúc</th>
+                            <th>Địa điểm</th>
+                            <th>Tình Trạng công việc</th>
+                            <th>Thao tác</th>
+
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        @if (listCW != null)
+                        {
+
+                            foreach (var item in listCW)
+                            {
+
+
+                                <tr id="row_@item.ID">
+                                    <td style="display:none">@item.ID </td>
+                                    <td><a href="/Calendar-Working-Detail/@item.ID">@(item.Name_CalendarWorking ?? "")</a></td>
+                                    <td>@item.Teacher_Name</td>
+
+                                    @if (item.DateStart != null)
+                                    {
+                                        <td>@item.DateStart.ToString("dd/MM/yyyy")</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @if (item.DateEnd != null)
+                                    {
+                                        <td>@item.DateEnd.ToString("dd/MM/yyyy")</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td>@(item.Address??"")</td>
+                                    <td>
+                                        @if (item.WorkState.Equals("DangThucHien"))
+                                        {
+                                            <span style="color:orange">Đang thực hiện</span>
+                                        }
+                                        else if (item.WorkState.Equals("DaHoanThanh"))
+                                        {
+                                            <span style="color:limegreen">Đã hoàn thành</span>
+                                        }
+                                        else if (item.WorkState.Equals("TamHoan"))
+                                        {
+                                            <span style="color:black">Tạm hoãn</span>
+                                        }
+                                    </td>
+                                    @if (session.GroupID == "ADMIN" && item.WorkState.Equals("DangThucHien"))
+                                    {
+                                        <td>
+
+                                            @*<button href="#" class="btn btn-danger btn-xs" style="color:white;">
+                                                    <i class="fa fa-trash"></i>
+                                                    @Ajax.ActionLink("Xoá", "Delete", new { @id = item.ID },
+                                                     new AjaxOptions
+                                                     {
+                                                         Confirm = "Bạn có muốn xoá bản ghi này?",
+                                                         OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                         HttpMethod = "Delete"
+                                                         }, new { @class = "button-delete" })
+                                                </button>*@
+                                            <button href="#" class="btn btn-warning btn-xs" style="color:orange;">
+                                                <i class="fa fa-warning"></i>
+                                                @Ajax.ActionLink("Hoãn", "Cancel", new { @id = item.ID },
+                                                 new AjaxOptions
+                                                 {
+                                                     Confirm = "Bạn có muốn hoãn lịch này?",
+                                                     OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                     HttpMethod = "Post"
+                                                 }, new { @class = "button-delete" })
+                                            </button>
+                                            <button href="#" class="btn btn-success btn-xs" style="color:lime;">
+                                                <i class="fa fa-check"></i>
+                                                @Ajax.ActionLink("Hoàn thành", "Completed", new { @id = item.ID },
+                                                 new AjaxOptions
+                                                 {
+                                                     Confirm = "Công việc đã hoàn thành?",
+                                                     OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                     HttpMethod = "Post"
+                                                 }, new { @class = "button-delete" })
+                                            </button>
+                                        </td>
+                                    }
+                                    else if (session.GroupID == "ADMIN" && item.WorkState.Equals("DaHoanThanh"))
+                                    {
+                                        <td>
+                                            <button href="#" class="btn btn-danger btn-xs" style="color:white;">
+                                                <i class="fa fa-trash-o"></i>
+                                                @Ajax.ActionLink("Xoá", "Delete", new { @id = item.ID },
+                                                 new AjaxOptions
+                                                 {
+                                                     Confirm = "Bạn có muốn xoá bản ghi này?",
+                                                     OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                     HttpMethod = "Delete"
+                                                 }, new { @class = "button-delete" })
+                                            </button>
+                                        </td>
+                                    }
+                                    else if (session.GroupID == "ADMIN" && item.WorkState == "TamHoan")
+                                    {
+                                        <td>
+                                            <a href="#" class="btn btn-info btn-xs" onclick="Sua(this)" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i> Sửa </a>
+                                            <button href="#" class="btn btn-warning btn-xs" style="color:orange;">
+                                                <i class="fa fa-trash-o"></i>
+                                                @Ajax.ActionLink("Tiếp tục", "Continue", new { @id = item.ID },
+                                                 new AjaxOptions
+                                                 {
+                                                     Confirm = "Bạn có muốn tiếp tục công việc này?",
+                                                     OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                     HttpMethod = "Post"
+                                                 }, new { @class = "button-delete" })
+                                            </button>
+                                            <button href="#" class="btn btn-danger btn-xs" style="color:white;">
+                                                <i class="fa fa-trash-o"></i>
+                                                @Ajax.ActionLink("Xoá", "Delete", new { @id = item.ID },
+                                                 new AjaxOptions
+                                                 {
+                                                     Confirm = "Bạn có muốn xoá bản ghi này?",
+                                                     OnComplete = "$('row_" + @item.ID + "').remove()",
+                                                     HttpMethod = "Delete"
+                                                 }, new { @class = "button-delete" })
+                                            </button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_CalendarWorkingModal")
+@Html.Partial("_UpdateCalendarWorkingModal")
+<script>
+    function Them() {
+        SetNull();
+    };
+    function SetNull() {
+        $("#Name").val('');
+        $("#ID").val('');
+        $("#Name_CalendarWorking").val('');
+        $("#Description").val('');
+        CKEDITOR.instances['Description'].setData('');
+        $("#NBD").val('');
+        $("#DateStart").val('');
+        $("#NKT").val('');
+        $("#DateEnd").val('');
+        $("#Address").val('');
+        $("#TeacherID").val('');
+        $("#WorkID").val('');
+        $("#TypeCalendarID").val('');
+        $("#Files").val('');
+
+    };
+    function Xoa(el) {
+        var id = el.parentNode.parentNode.cells[0].textContent;
+        $.ajax({
+            url: '/CalendarWorking/delList/?id=' + id,
+            type: 'POST',
+            dataType: 'json',
+            success: function () {
+                alert("Xóa thành công");
+                window.location.reload();
+            },
+            error: function () {
+                alert("Xóa thất bại");
+                window.location.reload();
+            }
+        });
+    }
+    function Sua(el) {
+        event.preventDefault();
+        var id = el.parentNode.parentNode.cells[0].textContent;
+        $.ajax({
+            url: '/CalendarWorking/GetWorkingCalendarData/?id=' + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var json = JSON.parse(data);
+                $("#ID1").val(json.ID);
+                $("#Name_CalendarWorking1").val(json.Name_CalendarWorking);
+                $("#Description1").val(json.Description);
+                CKEDITOR.instances['Description1'].setData(json.Description);
+                $("#NBD1").val(json.DateStart);
+                $("#DateStart1").val(json.DateStart.toString().substr(0, 10));
+                $("#NKT1").val(json.DateEnd);
+                $("#DateEnd1").val(json.DateEnd.toString().substr(0, 10));
+                $("#Address1").val(json.Address);
+                $("#TeacherID1").val(json.TeacherID);
+                $("#WorkID1").val(json.WorkID);
+                $("#WorkState1").val(json.WorkState);
+                $("#TypeCalendarID1").val(json.TypeCalendarID);
+                $("#Files1").val(json.Files.toString());
+            },
+            error: function (err) {
+                alert("Error: " + err.responseText);
+            }
+        });
+    }
+</script>
+
